@@ -7,7 +7,6 @@ const WithdrawPage = () => {
   const accountId = localStorage.getItem("accountId");
   const [accountNumber, setAccountNumber] = useState("");
   const [amount, setAmount] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -22,16 +21,12 @@ const WithdrawPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!accountNumber || !amount || !password) {
+    if (!accountNumber || !amount) {
       setError("모든 필드를 입력해 주세요.");
       return;
     }
     if (parseFloat(amount) <= 0) {
       setError("금액은 0보다 커야 합니다.");
-      return;
-    }
-    if (password.length !== 4) {
-      setError("비밀번호는 4자리여야 합니다.");
       return;
     }
 
@@ -41,7 +36,6 @@ const WithdrawPage = () => {
     const payload = {
       accountId: accountNumber,
       amount: parseFloat(amount),
-      password,
     };
 
     try {
@@ -87,19 +81,6 @@ const WithdrawPage = () => {
               placeholder="예: 10000"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              disabled={loading || success}
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">계좌 비밀번호 (4자리)</label>
-            <input
-              type="password"
-              className="form-control"
-              placeholder="••••"
-              maxLength={4}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               disabled={loading || success}
             />
           </div>
