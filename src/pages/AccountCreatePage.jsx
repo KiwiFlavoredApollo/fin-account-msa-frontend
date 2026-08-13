@@ -5,7 +5,6 @@ import { createAccount } from "../api/accountApi";
 const AccountCreatePage = () => {
   const navigate = useNavigate();
   const [ownerName, setOwnerName] = useState("");
-  const [password, setPassword] = useState("");
   const [initialBalance, setInitialBalance] = useState("10000");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -13,12 +12,8 @@ const AccountCreatePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!ownerName || !password) {
-      setError("예금주명과 비밀번호를 입력해주세요.");
-      return;
-    }
-    if (password.length !== 4) {
-      setError("비밀번호는 4자리여야 합니다.");
+    if (!ownerName) {
+      setError("예금주명을 입력해주세요.");
       return;
     }
 
@@ -27,7 +22,6 @@ const AccountCreatePage = () => {
 
     const payload = {
       ownerName,
-      password,
       balance: parseFloat(initialBalance) || 0,
     };
 
@@ -75,19 +69,6 @@ const AccountCreatePage = () => {
               placeholder="예: 홍길동"
               value={ownerName}
               onChange={(e) => setOwnerName(e.target.value)}
-              disabled={loading || success}
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">계좌 비밀번호 (4자리)</label>
-            <input
-              type="password"
-              className="form-control"
-              placeholder="••••"
-              maxLength={4}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               disabled={loading || success}
             />
           </div>
