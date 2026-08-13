@@ -223,8 +223,3 @@ http://localhost:5173
 Authorization: Bearer {JWT}
 ```
 
-## Notes
-
-Frontend는 화면 구현과 API 연동에 집중하며, 서비스 간 통신, Kafka, Saga, Schema Registry 등의 처리는 Backend에서 담당합니다.
-
-한 가지는 지금 요구사항에서 **로그인 API 경로가 아직 확정되지 않았으니까 README에는 로그인 기능만 적고 `/api/auth/login` 같은 경로는 일부러 확정해서 넣지 않았어.** 백엔드에서 인증 API를 정하면 그때 추가하는 게 맞아.
