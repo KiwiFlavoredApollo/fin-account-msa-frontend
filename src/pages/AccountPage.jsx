@@ -27,11 +27,14 @@ const AccountPage = () => {
       } catch (err) {
         console.warn("Backend API failed. Showing mock account details for demo purposes.", err);
         
-        // Show demo mockup data according to specified format
+        const savedOwnerName = localStorage.getItem("mockOwnerName") || "황윤서";
+        const savedAccountNumber = localStorage.getItem("mockAccountNumber") || "110123456789";
+
+        // Show demo mockup data according to specified format with string ownerName
         setAccount({
           accountId: parseInt(accountId, 10) || 10,
-          accountNumber: "110123456789",
-          ownerName: 1, // ownerName is integer in specified format
+          accountNumber: savedAccountNumber,
+          ownerName: savedOwnerName, // Now ownerName is a string representing name
           status: "ACTIVE",
           balance: 100000,
         });
