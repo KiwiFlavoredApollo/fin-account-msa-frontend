@@ -45,13 +45,10 @@ const AppRouter = () => {
           </ProtectedRoute>
         }
       />
+      {/* unguarded so both guests and logged-in users can create accounts */}
       <Route
         path="/create-account"
-        element={
-          <ProtectedRoute>
-            <AccountCreatePage />
-          </ProtectedRoute>
-        }
+        element={<AccountCreatePage />}
       />
       <Route
         path="/deposit"
