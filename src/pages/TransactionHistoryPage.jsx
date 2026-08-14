@@ -25,43 +25,43 @@ const TransactionHistoryPage = () => {
       } catch (err) {
         console.warn("Backend API failed. Using mock transaction data for demo purposes.", err);
         
-        // Mock Transactions for testing
+        // Mock Transactions matching exactly the specified response format
         const demoTransactions = [
           {
-            id: "tx-1",
-            transactionType: "DEPOSIT",
-            senderAccountNumber: "-",
-            receiverAccountNumber: accountId,
-            amount: 100000,
+            transactionId: 100,
+            type: "DEPOSIT",
+            fromAccountId: null,
+            toAccountId: parseInt(accountId, 10) || 10,
+            amount: 50000,
             status: "SUCCESS",
-            createdAt: new Date(Date.now() - 3600000 * 24).toISOString(), // 1 day ago
+            createdAt: "2026-08-13T17:00:00"
           },
           {
-            id: "tx-2",
-            transactionType: "WITHDRAW",
-            senderAccountNumber: accountId,
-            receiverAccountNumber: "-",
-            amount: 20000,
-            status: "SUCCESS",
-            createdAt: new Date(Date.now() - 3600000 * 5).toISOString(), // 5 hours ago
-          },
-          {
-            id: "tx-3",
-            transactionType: "TRANSFER",
-            senderAccountNumber: accountId,
-            receiverAccountNumber: "110-987-65432",
+            transactionId: 101,
+            type: "WITHDRAW",
+            fromAccountId: parseInt(accountId, 10) || 10,
+            toAccountId: null,
             amount: 30000,
             status: "SUCCESS",
-            createdAt: new Date(Date.now() - 600000).toISOString(), // 10 minutes ago
+            createdAt: "2026-08-13T17:05:00"
           },
           {
-            id: "tx-4",
-            transactionType: "TRANSFER",
-            senderAccountNumber: "110-987-65432",
-            receiverAccountNumber: accountId,
+            transactionId: 102,
+            type: "TRANSFER",
+            fromAccountId: parseInt(accountId, 10) || 10,
+            toAccountId: 20,
+            amount: 30000,
+            status: "SUCCESS",
+            createdAt: "2026-08-13T17:10:00"
+          },
+          {
+            transactionId: 103,
+            type: "TRANSFER",
+            fromAccountId: 20,
+            toAccountId: parseInt(accountId, 10) || 10,
             amount: 15000,
             status: "SUCCESS",
-            createdAt: new Date(Date.now() - 100000).toISOString(), // 1.5 minutes ago
+            createdAt: "2026-08-13T17:15:00"
           }
         ];
         
@@ -85,7 +85,7 @@ const TransactionHistoryPage = () => {
 
       <div className="card" style={{ padding: "1rem" }}>
         <p style={{ fontSize: "0.95rem", color: "var(--text-muted)", marginBottom: "1rem" }}>
-          계좌번호: <strong style={{ color: "var(--text)" }}>{accountId}</strong> 의 최근 거래내역입니다.
+          계좌 ID: <strong style={{ color: "var(--text)" }}>{accountId}</strong> 의 최근 거래내역입니다.
         </p>
         <TransactionList 
           transactions={transactions} 

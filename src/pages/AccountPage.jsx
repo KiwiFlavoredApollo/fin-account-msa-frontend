@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { getAccount, getBalance } from "../api/accountApi";
+import { getAccount } from "../api/accountApi";
 import AccountCard from "../components/AccountCard";
 
 const AccountPage = () => {
@@ -21,24 +21,21 @@ const AccountPage = () => {
       setLoading(true);
       setError("");
       try {
-        const [accountRes, balanceRes] = await Promise.all([
-          getAccount(accountId),
-          getBalance(accountId),
-        ]);
-
+        const accountRes = await getAccount(accountId);
         setAccount(accountRes.data);
-        setBalance(balanceRes.data.balance !== undefined ? balanceRes.data.balance : balanceRes.data);
+        setBalance(accountRes.data.balance !== undefined ? accountRes.data.balance : 0);
       } catch (err) {
         console.warn("Backend API failed. Showing mock account details for demo purposes.", err);
         
-        // Show demo mockup data
+        // Show demo mockup data according to specified format
         setAccount({
-          accountNumber: accountId,
-          ownerName: "홍길동 (데모)",
+          accountId: parseInt(accountId, 10) || 10,
+          accountNumber: "110123456789",
+          ownerName: 1, // ownerName is integer in specified format
           status: "ACTIVE",
-          balance: 500000,
+          balance: 100000,
         });
-        setBalance(500000);
+        setBalance(100000);
       } finally {
         setLoading(false);
       }
@@ -50,7 +47,7 @@ const AccountPage = () => {
   return (
     <div className="container">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: "700" }}>내 계좌 대시보드</h1>
+        <h1 style={{ fontSize: "1.5rem", fontWeight: "700" }}>내 계좌 대시보드 (계좌 ID: {accountId})</h1>
         <Link to="/create-account" className="btn btn-secondary">
           + 새 계좌 개설
         </Link>

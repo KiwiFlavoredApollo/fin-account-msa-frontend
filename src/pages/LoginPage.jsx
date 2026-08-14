@@ -20,18 +20,15 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      // 1. API Login request (placeholder)
-      // Since login API path is not finalized, we try to call /auth/login or /login.
-      // If the backend returns a 404/Connection Error, we'll offer a graceful mock login
-      // so developers can test the frontend immediately.
-      const response = await apiClient.post("/auth/login", {
+      // 1. API Login request according to the specified format
+      const response = await apiClient.post("/api/auth/login", {
         accountNumber,
         password,
       });
 
-      if (response.data && response.data.token) {
-        localStorage.setItem("accessToken", response.data.token);
-        localStorage.setItem("accountId", accountNumber);
+      if (response.data && response.data.accessToken) {
+        localStorage.setItem("accessToken", response.data.accessToken);
+        localStorage.setItem("accountId", String(response.data.accountId));
         navigate("/account");
       } else {
         throw new Error("Invalid response format");
@@ -39,11 +36,11 @@ const LoginPage = () => {
     } catch (err) {
       console.warn("Backend Login API failed or is not configured yet. Falling back to local demo session...", err);
       
-      // Automatic fallback for demo/development purposes
+      // Automatic fallback for demo/development purposes (uses spec response format)
       localStorage.setItem("accessToken", "demo-jwt-token-value");
-      localStorage.setItem("accountId", accountNumber);
+      localStorage.setItem("accountId", "10"); // Default mock accountId (integer represented as string in localStorage)
       
-      setInfoMessage("안내: 백엔드 인증 API가 준비되지 않아 데모 세션으로 로그인되었습니다.");
+      setInfoMessage("안내: 백엔드 인증 API가 준비되지 않아 데모 세션(계좌 ID: 10)으로 로그인되었습니다.");
       setTimeout(() => {
         navigate("/account");
       }, 1500);
@@ -52,9 +49,9 @@ const LoginPage = () => {
     }
   };
 
-  const handleDemoLogin = (demoNum) => {
+  const handleDemoLogin = (demoId) => {
     localStorage.setItem("accessToken", "demo-jwt-token-value");
-    localStorage.setItem("accountId", demoNum);
+    localStorage.setItem("accountId", String(demoId));
     navigate("/account");
   };
 
@@ -74,7 +71,7 @@ const LoginPage = () => {
             <input
               type="text"
               className="form-control"
-              placeholder="123-456-7890"
+              placeholder="예: 110123456789"
               value={accountNumber}
               onChange={(e) => setAccountNumber(e.target.value)}
               disabled={loading}
@@ -105,22 +102,22 @@ const LoginPage = () => {
 
         <div style={{ marginTop: "2rem", borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
           <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", textAlign: "center", marginBottom: "0.75rem" }}>
-            데모 계좌로 즉시 테스트하기
+            데모 계좌 ID로 즉시 테스트하기
           </p>
           <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
             <button 
-              onClick={() => handleDemoLogin("110-123-45678")} 
+              onClick={() => handleDemoLogin(10)} 
               className="btn btn-secondary" 
               style={{ fontSize: "0.75rem", padding: "0.3rem 0.6rem" }}
             >
-              계좌 A
+              계좌 ID 10
             </button>
             <button 
-              onClick={() => handleDemoLogin("110-987-65432")} 
+              onClick={() => handleDemoLogin(20)} 
               className="btn btn-secondary" 
               style={{ fontSize: "0.75rem", padding: "0.3rem 0.6rem" }}
             >
-              계좌 B
+              계좌 ID 20
             </button>
           </div>
         </div>

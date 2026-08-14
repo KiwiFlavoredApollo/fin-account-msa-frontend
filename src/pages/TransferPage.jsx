@@ -5,8 +5,8 @@ import { transfer } from "../api/transactionApi";
 const TransferPage = () => {
   const navigate = useNavigate();
   const accountId = localStorage.getItem("accountId");
-  const [senderAccountNumber, setSenderAccountNumber] = useState("");
-  const [receiverAccountNumber, setReceiverAccountNumber] = useState("");
+  const [fromAccountInputId, setFromAccountInputId] = useState("");
+  const [toAccountInputId, setToAccountInputId] = useState("");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -17,16 +17,16 @@ const TransferPage = () => {
       navigate("/login");
       return;
     }
-    setSenderAccountNumber(accountId);
+    setFromAccountInputId(accountId);
   }, [accountId, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!senderAccountNumber || !receiverAccountNumber || !amount) {
+    if (!fromAccountInputId || !toAccountInputId || !amount) {
       setError("모든 필드를 입력해 주세요.");
       return;
     }
-    if (senderAccountNumber === receiverAccountNumber) {
+    if (parseInt(fromAccountInputId, 10) === parseInt(toAccountInputId, 10)) {
       setError("동일한 계좌로 이체할 수 없습니다.");
       return;
     }
@@ -39,18 +39,18 @@ const TransferPage = () => {
     setLoading(true);
 
     const payload = {
-      senderAccountNumber,
-      receiverAccountNumber,
-      amount: parseFloat(amount),
+      fromAccountId: parseInt(fromAccountInputId, 10),
+      toAccountId: parseInt(toAccountInputId, 10),
+      amount: parseInt(amount, 10),
     };
 
     try {
       await transfer(payload);
-      setSuccess(`${receiverAccountNumber} 계좌로 ${new Intl.NumberFormat("ko-KR").format(amount)}원 송금이 완료되었습니다.`);
+      setSuccess(`계좌 ID ${toAccountInputId}로 ${new Intl.NumberFormat("ko-KR").format(amount)}원 송금이 완료되었습니다.`);
       setTimeout(() => navigate("/account"), 2000);
     } catch (err) {
       console.warn("Backend API failed. Showing mock transfer success for demo.", err);
-      setSuccess(`[데모] ${receiverAccountNumber} 계좌로 ${new Intl.NumberFormat("ko-KR").format(amount)}원 송금이 완료되었습니다.`);
+      setSuccess(`[데모] 계좌 ID ${toAccountInputId}로 ${new Intl.NumberFormat("ko-KR").format(amount)}원 송금이 완료되었습니다.`);
       setTimeout(() => navigate("/account"), 2000);
     } finally {
       setLoading(false);
@@ -69,24 +69,24 @@ const TransferPage = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">출금 계좌번호 (내 계좌)</label>
+            <label className="form-label">출금 계좌 ID (내 계좌)</label>
             <input
-              type="text"
+              type="number"
               className="form-control"
-              value={senderAccountNumber}
-              onChange={(e) => setSenderAccountNumber(e.target.value)}
+              value={fromAccountInputId}
+              onChange={(e) => setFromAccountInputId(e.target.value)}
               disabled={loading || success}
             />
           </div>
 
           <div className="form-group">
-            <label className="form-label">입금 계좌번호 (상대방 계좌)</label>
+            <label className="form-label">입금 계좌 ID (상대방 계좌)</label>
             <input
-              type="text"
+              type="number"
               className="form-control"
-              placeholder="예: 110-123-45678"
-              value={receiverAccountNumber}
-              onChange={(e) => setReceiverAccountNumber(e.target.value)}
+              placeholder="예: 20"
+              value={toAccountInputId}
+              onChange={(e) => setToAccountInputId(e.target.value)}
               disabled={loading || success}
             />
           </div>
@@ -96,7 +96,7 @@ const TransferPage = () => {
             <input
               type="number"
               className="form-control"
-              placeholder="예: 50000"
+              placeholder="예: 30000"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               disabled={loading || success}

@@ -5,7 +5,7 @@ import { deposit } from "../api/transactionApi";
 const DepositPage = () => {
   const navigate = useNavigate();
   const accountId = localStorage.getItem("accountId");
-  const [accountNumber, setAccountNumber] = useState("");
+  const [accountInputId, setAccountInputId] = useState("");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -16,12 +16,12 @@ const DepositPage = () => {
       navigate("/login");
       return;
     }
-    setAccountNumber(accountId);
+    setAccountInputId(accountId);
   }, [accountId, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!accountNumber || !amount) {
+    if (!accountInputId || !amount) {
       setError("모든 필드를 입력해 주세요.");
       return;
     }
@@ -34,8 +34,8 @@ const DepositPage = () => {
     setLoading(true);
 
     const payload = {
-      accountId: accountNumber,
-      amount: parseFloat(amount),
+      accountId: parseInt(accountInputId, 10),
+      amount: parseInt(amount, 10),
     };
 
     try {
@@ -63,12 +63,12 @@ const DepositPage = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">계좌번호</label>
+            <label className="form-label">계좌 ID (숫자)</label>
             <input
-              type="text"
+              type="number"
               className="form-control"
-              value={accountNumber}
-              onChange={(e) => setAccountNumber(e.target.value)}
+              value={accountInputId}
+              onChange={(e) => setAccountInputId(e.target.value)}
               disabled={loading || success}
             />
           </div>
@@ -78,7 +78,7 @@ const DepositPage = () => {
             <input
               type="number"
               className="form-control"
-              placeholder="예: 10000"
+              placeholder="예: 50000"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               disabled={loading || success}

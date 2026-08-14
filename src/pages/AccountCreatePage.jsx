@@ -4,16 +4,16 @@ import { createAccount } from "../api/accountApi";
 
 const AccountCreatePage = () => {
   const navigate = useNavigate();
-  const [ownerName, setOwnerName] = useState("");
-  const [initialBalance, setInitialBalance] = useState("10000");
+  const [ownerName, setOwnerName] = useState("1"); // Owner ID as integer, default 1
+  const [password, setPassword] = useState("1234"); // Account password, default 1234
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!ownerName) {
-      setError("예금주명을 입력해주세요.");
+    if (!ownerName || !password) {
+      setError("예금주 ID와 비밀번호를 모두 입력해주세요.");
       return;
     }
 
@@ -21,16 +21,17 @@ const AccountCreatePage = () => {
     setLoading(true);
 
     const payload = {
-      ownerName,
-      balance: parseFloat(initialBalance) || 0,
+      ownerName: parseInt(ownerName, 10) || 1,
+      password: password,
     };
 
     try {
       const response = await createAccount(payload);
       
-      const newAccountNum = response.data.accountNumber || response.data.id || "110-" + Math.floor(100000 + Math.random() * 900000);
-      setSuccess(`계좌가 성공적으로 개설되었습니다! 계좌번호: ${newAccountNum}`);
-      localStorage.setItem("accountId", newAccountNum);
+      const newAccountId = response.data.accountId || 10;
+      const newAccountNum = response.data.accountNumber || "110123456789";
+      setSuccess(`계좌가 성공적으로 개설되었습니다! 계좌 ID: ${newAccountId}, 계좌번호: ${newAccountNum}`);
+      localStorage.setItem("accountId", String(newAccountId));
       
       setTimeout(() => {
         navigate("/account");
@@ -38,9 +39,10 @@ const AccountCreatePage = () => {
     } catch (err) {
       console.warn("Backend API call failed. Generating mock account for demo purposes...", err);
       
-      const mockAccountNum = "110-" + Math.floor(100000 + Math.random() * 900000) + "-demo";
-      setSuccess(`[데모] 계좌가 개설되었습니다! 계좌번호: ${mockAccountNum}`);
-      localStorage.setItem("accountId", mockAccountNum);
+      const mockAccountId = Math.floor(10 + Math.random() * 90);
+      const mockAccountNum = "110" + Math.floor(100000000 + Math.random() * 900000000);
+      setSuccess(`[데모] 계좌가 개설되었습니다! 계좌 ID: ${mockAccountId}, 계좌번호: ${mockAccountNum}`);
+      localStorage.setItem("accountId", String(mockAccountId));
       
       setTimeout(() => {
         navigate("/account");
@@ -62,11 +64,11 @@ const AccountCreatePage = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">예금주명</label>
+            <label className="form-label">예금주 ID (숫자)</label>
             <input
-              type="text"
+              type="number"
               className="form-control"
-              placeholder="예: 홍길동"
+              placeholder="예: 1"
               value={ownerName}
               onChange={(e) => setOwnerName(e.target.value)}
               disabled={loading || success}
@@ -74,13 +76,13 @@ const AccountCreatePage = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">초기 입금액 (원)</label>
+            <label className="form-label">계좌 비밀번호</label>
             <input
-              type="number"
+              type="password"
               className="form-control"
-              placeholder="0"
-              value={initialBalance}
-              onChange={(e) => setInitialBalance(e.target.value)}
+              placeholder="예: 1234"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               disabled={loading || success}
             />
           </div>

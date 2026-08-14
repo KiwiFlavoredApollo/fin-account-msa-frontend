@@ -40,17 +40,23 @@ const TransactionList = ({ transactions, loading, currentAccountNumber }) => {
     let typeName = type;
     let badgeClass = "badge-warning";
 
-    if (type === "DEPOSIT" || type === "deposit") {
+    const cleanType = String(type).toUpperCase();
+
+    if (cleanType === "DEPOSIT") {
       typeName = "입금";
       badgeClass = "badge-success";
-    } else if (type === "WITHDRAW" || type === "withdraw") {
+    } else if (cleanType === "WITHDRAW") {
       typeName = "출금";
       badgeClass = "badge-error";
-    } else if (type === "TRANSFER" || type === "transfer") {
-      if (currentAccountNumber && tx.senderAccountNumber === currentAccountNumber) {
+    } else if (cleanType === "TRANSFER") {
+      const fromAcc = String(tx.fromAccountId !== undefined && tx.fromAccountId !== null ? tx.fromAccountId : tx.senderAccountNumber || "");
+      const toAcc = String(tx.toAccountId !== undefined && tx.toAccountId !== null ? tx.toAccountId : tx.receiverAccountNumber || "");
+      const currAcc = String(currentAccountNumber || "");
+
+      if (currAcc && fromAcc === currAcc) {
         typeName = "송금(이체출금)";
         badgeClass = "badge-error";
-      } else if (currentAccountNumber && tx.receiverAccountNumber === currentAccountNumber) {
+      } else if (currAcc && toAcc === currAcc) {
         typeName = "수신(이체입금)";
         badgeClass = "badge-success";
       } else {
@@ -68,8 +74,8 @@ const TransactionList = ({ transactions, loading, currentAccountNumber }) => {
         <thead>
           <tr>
             <th>거래유형</th>
-            <th>보낸 계좌</th>
-            <th>받는 계좌</th>
+            <th>보낸 계좌 ID</th>
+            <th>받는 계좌 ID</th>
             <th>거래금액</th>
             <th>상태</th>
             <th>거래시간</th>
@@ -77,10 +83,10 @@ const TransactionList = ({ transactions, loading, currentAccountNumber }) => {
         </thead>
         <tbody>
           {transactions.map((tx) => (
-            <tr key={tx.id || tx.transactionId}>
-              <td>{getTransactionTypeBadge(tx.transactionType || tx.type, tx)}</td>
-              <td>{tx.senderAccountNumber || tx.fromAccount || "-"}</td>
-              <td>{tx.receiverAccountNumber || tx.toAccount || "-"}</td>
+            <tr key={tx.transactionId || tx.id}>
+              <td>{getTransactionTypeBadge(tx.type || tx.transactionType, tx)}</td>
+              <td>{tx.fromAccountId !== null && tx.fromAccountId !== undefined ? tx.fromAccountId : "-"}</td>
+              <td>{tx.toAccountId !== null && tx.toAccountId !== undefined ? tx.toAccountId : "-"}</td>
               <td style={{ fontWeight: "600" }}>
                 {formatCurrency(tx.amount)}
               </td>
