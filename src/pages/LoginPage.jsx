@@ -36,7 +36,7 @@ const LoginPage = () => {
 
     try {
       // 1. API Login request
-      const response = await apiClient.post("/api/auth/login", {
+      const response = await apiClient.post("/auth/login", {
         accountNumber,
         password,
       });
