@@ -13,10 +13,16 @@ const Header = () => {
     navigate("/login");
   };
 
+  const handleBrandClick = () => {
+    if (location.pathname === "/account") {
+      window.dispatchEvent(new CustomEvent("reset-account-view"));
+    }
+  };
+
   return (
     <header className="app-header">
       <div className="header-container">
-        <Link to={token ? `/account` : "/login"} className="brand">
+        <Link to="/login" className="brand">
           🏦 FIN-M Banking
         </Link>
         <nav className="nav-links">

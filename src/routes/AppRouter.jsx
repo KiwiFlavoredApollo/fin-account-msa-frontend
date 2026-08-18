@@ -17,25 +17,16 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-// Route guard for unauthenticated users
-const PublicRoute = ({ children }) => {
-  const token = localStorage.getItem("accessToken");
-  if (token) {
-    return <Navigate to="/account" replace />;
-  }
-  return children;
-};
-
 const AppRouter = () => {
   return (
     <Routes>
       <Route
+        path="/"
+        element={<Navigate to="/login" replace />}
+      />
+      <Route
         path="/login"
-        element={
-          <PublicRoute>
-            <LoginPage />
-          </PublicRoute>
-        }
+        element={<LoginPage />}
       />
       <Route
         path="/account"

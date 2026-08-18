@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { getAccount } from "../api/accountApi";
 import AccountCard from "../components/AccountCard";
+import DepositPage from "./DepositPage";
+import WithdrawPage from "./WithdrawPage";
+import TransferPage from "./TransferPage";
+import TransactionHistoryPage from "./TransactionHistoryPage";
 
 const AccountPage = () => {
   const navigate = useNavigate();
@@ -10,6 +14,16 @@ const AccountPage = () => {
   const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [activeTask, setActiveTask] = useState(null); // 'deposit' | 'withdraw' | 'transfer' | 'history'
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  useEffect(() => {
+    const handleReset = () => {
+      setActiveTask(null);
+    };
+    window.addEventListener("reset-account-view", handleReset);
+    return () => window.removeEventListener("reset-account-view", handleReset);
+  }, []);
 
   useEffect(() => {
     if (!accountId) {
@@ -45,7 +59,16 @@ const AccountPage = () => {
     };
 
     fetchAccountData();
-  }, [accountId, navigate]);
+  }, [accountId, navigate, refreshTrigger]);
+
+  const handleTaskComplete = () => {
+    setRefreshTrigger((prev) => prev + 1);
+    setActiveTask(null);
+  };
+
+  const handleTaskCancel = () => {
+    setActiveTask(null);
+  };
 
   return (
     <div className="container">
@@ -61,23 +84,69 @@ const AccountPage = () => {
       <AccountCard account={account} balance={balance} loading={loading} />
 
       {!loading && account && (
-        <div className="card">
-          <h3 className="card-title">계좌 업무</h3>
-          <div className="action-grid">
-            <Link to="/deposit" className="btn btn-primary" style={{ padding: "1rem" }}>
-              💵 입금하기
-            </Link>
-            <Link to="/withdraw" className="btn btn-secondary" style={{ padding: "1rem" }}>
-              💸 출금하기
-            </Link>
-            <Link to="/transfer" className="btn btn-secondary" style={{ padding: "1rem" }}>
-              🔄 이체하기
-            </Link>
-            <Link to="/history" className="btn btn-secondary" style={{ padding: "1rem" }}>
-              📋 거래내역
-            </Link>
+        <>
+          <div className="card" style={{ marginBottom: activeTask ? "0rem" : "1.5rem" }}>
+            <h3 className="card-title">계좌 업무</h3>
+            <div className="action-grid">
+              <button
+                onClick={() => setActiveTask(activeTask === "deposit" ? null : "deposit")}
+                className={`btn ${activeTask === "deposit" ? "btn-primary" : "btn-secondary"}`}
+                style={{ padding: "1rem" }}
+              >
+                💵 입금하기
+              </button>
+              <button
+                onClick={() => setActiveTask(activeTask === "withdraw" ? null : "withdraw")}
+                className={`btn ${activeTask === "withdraw" ? "btn-primary" : "btn-secondary"}`}
+                style={{ padding: "1rem" }}
+              >
+                💸 출금하기
+              </button>
+              <button
+                onClick={() => setActiveTask(activeTask === "transfer" ? null : "transfer")}
+                className={`btn ${activeTask === "transfer" ? "btn-primary" : "btn-secondary"}`}
+                style={{ padding: "1rem" }}
+              >
+                🔄 이체하기
+              </button>
+              <button
+                onClick={() => setActiveTask(activeTask === "history" ? null : "history")}
+                className={`btn ${activeTask === "history" ? "btn-primary" : "btn-secondary"}`}
+                style={{ padding: "1rem" }}
+              >
+                📋 거래내역
+              </button>
+            </div>
           </div>
-        </div>
+
+          {activeTask === "deposit" && (
+            <DepositPage
+              isInline={true}
+              onComplete={handleTaskComplete}
+              onCancel={handleTaskCancel}
+            />
+          )}
+          {activeTask === "withdraw" && (
+            <WithdrawPage
+              isInline={true}
+              onComplete={handleTaskComplete}
+              onCancel={handleTaskCancel}
+            />
+          )}
+          {activeTask === "transfer" && (
+            <TransferPage
+              isInline={true}
+              onComplete={handleTaskComplete}
+              onCancel={handleTaskCancel}
+            />
+          )}
+          {activeTask === "history" && (
+            <TransactionHistoryPage
+              isInline={true}
+              onCancel={handleTaskCancel}
+            />
+          )}
+        </>
       )}
     </div>
   );
