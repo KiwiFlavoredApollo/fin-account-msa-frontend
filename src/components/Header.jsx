@@ -22,7 +22,7 @@ const Header = () => {
   return (
     <header className="app-header">
       <div className="header-container">
-        <Link to="/login" className="brand">
+        <Link to={token ? "/account" : "/login"} className="brand" onClick={handleBrandClick}>
           🏦 FIN-M Banking
         </Link>
         <nav className="nav-links">

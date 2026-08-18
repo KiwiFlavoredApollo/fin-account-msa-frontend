@@ -17,16 +17,37 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+// Route guard for unauthenticated users
+const PublicRoute = ({ children }) => {
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    return <Navigate to="/account" replace />;
+  }
+  return children;
+};
+
 const AppRouter = () => {
+  const token = localStorage.getItem("accessToken");
+
   return (
     <Routes>
       <Route
         path="/"
-        element={<Navigate to="/login" replace />}
+        element={
+          token ? (
+            <Navigate to="/account" replace />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
       />
       <Route
         path="/login"
-        element={<LoginPage />}
+        element={
+          <PublicRoute>
+            <LoginPage />
+          </PublicRoute>
+        }
       />
       <Route
         path="/account"
@@ -76,7 +97,7 @@ const AppRouter = () => {
       {/* Fallback route */}
       <Route
         path="*"
-        element={<Navigate to="/login" replace />}
+        element={<Navigate to={token ? "/account" : "/login"} replace />}
       />
     </Routes>
   );
