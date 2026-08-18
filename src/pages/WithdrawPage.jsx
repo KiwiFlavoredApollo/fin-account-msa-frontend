@@ -34,6 +34,7 @@ const WithdrawPage = ({ isInline, onComplete, onCancel }) => {
     setLoading(true);
 
     const payload = {
+      accountId: parseInt(accountInputId, 10),
       fromAccountId: parseInt(accountInputId, 10),
       amount: parseInt(amount, 10),
     };

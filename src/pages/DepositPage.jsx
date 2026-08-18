@@ -34,6 +34,7 @@ const DepositPage = ({ isInline, onComplete, onCancel }) => {
     setLoading(true);
 
     const payload = {
+      accountId: parseInt(accountInputId, 10),
       toAccountId: parseInt(accountInputId, 10),
       amount: parseInt(amount, 10),
     };
