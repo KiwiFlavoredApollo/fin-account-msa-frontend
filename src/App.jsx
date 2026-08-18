@@ -5,7 +5,7 @@ import AppRouter from "./routes/AppRouter";
 
 function App() {
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <div className="app-layout">
         <Header />
         <main className="app-content">
