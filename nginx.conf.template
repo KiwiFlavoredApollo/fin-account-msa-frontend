@@ -17,6 +17,10 @@ server {
         proxy_pass ${VITE_API_BASE_URL};
     }
 
+    location /auth/login {
+        proxy_pass ${VITE_API_BASE_URL};
+    }
+
     location / {
         try_files $uri $uri/ /index.html;
     }
