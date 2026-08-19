@@ -5,7 +5,6 @@ import { transfer } from "../api/transactionApi";
 const TransferPage = ({ isInline, onComplete, onCancel }) => {
   const navigate = useNavigate();
   const accountId = localStorage.getItem("accountId");
-  const [fromAccountInputId, setFromAccountInputId] = useState("");
   const [toAccountInputId, setToAccountInputId] = useState("");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,16 +16,15 @@ const TransferPage = ({ isInline, onComplete, onCancel }) => {
       navigate("/login");
       return;
     }
-    setFromAccountInputId(accountId);
   }, [accountId, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!fromAccountInputId || !toAccountInputId || !amount) {
+    if (!toAccountInputId || !amount) {
       setError("모든 필드를 입력해 주세요.");
       return;
     }
-    if (parseInt(fromAccountInputId, 10) === parseInt(toAccountInputId, 10)) {
+    if (parseInt(accountId, 10) === parseInt(toAccountInputId, 10)) {
       setError("동일한 계좌로 이체할 수 없습니다.");
       return;
     }
@@ -39,7 +37,7 @@ const TransferPage = ({ isInline, onComplete, onCancel }) => {
     setLoading(true);
 
     const payload = {
-      fromAccountId: parseInt(fromAccountInputId, 10),
+      fromAccountId: parseInt(accountId, 10),
       toAccountId: parseInt(toAccountInputId, 10),
       amount: parseInt(amount, 10),
     };
@@ -87,17 +85,6 @@ const TransferPage = ({ isInline, onComplete, onCancel }) => {
       {success && <div className="alert alert-success">{success}</div>}
 
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label className="form-label">출금 계좌 ID (내 계좌)</label>
-          <input
-            type="number"
-            className="form-control"
-            value={fromAccountInputId}
-            onChange={(e) => setFromAccountInputId(e.target.value)}
-            disabled={loading || success}
-          />
-        </div>
-
         <div className="form-group">
           <label className="form-label">입금 계좌 ID (상대방 계좌)</label>
           <input

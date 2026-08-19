@@ -88,6 +88,7 @@ const AccountPage = () => {
           <div className="card" style={{ marginBottom: activeTask ? "0rem" : "1.5rem" }}>
             <h3 className="card-title">계좌 업무</h3>
             <div className="action-grid">
+              {/* 입금하기 / 출금하기 버튼 숨김 (요청에 따라 주석 처리)
               <button
                 onClick={() => setActiveTask(activeTask === "deposit" ? null : "deposit")}
                 className={`btn ${activeTask === "deposit" ? "btn-primary" : "btn-secondary"}`}
@@ -102,6 +103,7 @@ const AccountPage = () => {
               >
                 💸 출금하기
               </button>
+              */}
               <button
                 onClick={() => setActiveTask(activeTask === "transfer" ? null : "transfer")}
                 className={`btn ${activeTask === "transfer" ? "btn-primary" : "btn-secondary"}`}
