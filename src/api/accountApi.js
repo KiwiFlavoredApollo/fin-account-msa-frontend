@@ -1,9 +1,9 @@
 import apiClient from "./apiClient";
 
 export const createAccount = (data) => {
-  return apiClient.post("/api/accounts", data);
+  return apiClient.post("/accounts", data);
 };
 
 export const getAccount = (accountId) => {
-  return apiClient.get(`/api/accounts/${accountId}`);
+  return apiClient.get(`/accounts/${accountId}`);
 };
